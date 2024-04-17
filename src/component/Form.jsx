@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef } from "react";
+import {toJpeg} from "html-to-image"
 const Form = () => {
   const [allMemes, setAllMemes] = useState([]);
   const [meme, setmeme] = useState({
@@ -21,6 +22,19 @@ const Form = () => {
   function handleChange(event) {
     const { value, name } = event.target;
     setmeme((previous) => ({ ...previous, [name]: value }));
+  }
+  const ref=useRef(null)
+  console.log(ref);
+  const downloadImage=()=>{
+    console.log(ref.current);
+    toJpeg(ref.current,{cacheBust:true}).then(dataUrl=>{
+      console.log(dataUrl);
+      const link=document.createElement("a")
+      link.download="my-meme-image.jpeg";
+      link.href=dataUrl;
+      link.click()
+    })
+
   }
   return (
     <div className="bg-white p-5 flex flex-col gap-6 justify-center items-center">
@@ -66,7 +80,7 @@ const Form = () => {
       >
         Get a new meme image 📸
       </button>
-      <div className="relative">
+      <div className="relative" ref={ref}>
         <img src={meme.img} alt="" className="w-screen p-3" />
         <h2 className="absolute top-8 left-[50%] shade translate-x-[-50%] text-white font-bold text-xl md:text-3xl  font-karla text-nowrap ">
           {meme.topText}
@@ -75,6 +89,7 @@ const Form = () => {
           {meme.bottomText}
         </h2>
       </div>
+      <button className="bg-gradient-to-r from-[#672280] to-[#A626D3] md:w-477 w-scree text-white font-karla font-bold text-sm px-9 py-3 rounded-md" onClick={downloadImage} >Download</button>
     </div>
   );
 };
